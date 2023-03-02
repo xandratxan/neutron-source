@@ -73,7 +73,7 @@ def test_source_total_air_scatter_component(example_source):
 def test_percentage_uncertainty():
     value, absolute_uncertainty = 100, 10
     expected = absolute_uncertainty / value * 100
-    actual = source.percentage_uncertainty(100, 1)
+    actual = source.percentage_uncertainty(100, 10)
     assert actual == expected, f'Percentage uncertainty should be {expected}.'
 
 
