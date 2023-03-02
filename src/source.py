@@ -33,3 +33,9 @@ class Source:
         self.fluence_to_dose_conversion_factor = None
         self.neutron_effectiveness = None
         self.total_air_scatter_component = None
+
+    def __repr__(self):
+        return f'{self.__class__.__module__}.{self.__class__.__name__}()'
+
+    def __str__(self):
+        return f'{self.__class__.__name__} source'
