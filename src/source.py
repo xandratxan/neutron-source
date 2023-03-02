@@ -108,6 +108,7 @@ def elapsed_time(initial_date, final_date):
     tuple
         Elapsed time between the initial and final dates (value, uncertainty, percentage uncertainty).
     """
+    # TODO: this method may be in a separate module, it is not a characteristic of a neutron source
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
     time = final_date - initial_date
@@ -118,4 +119,19 @@ def elapsed_time(initial_date, final_date):
 
 
 def percentage_uncertainty(value, absolute_uncertainty):
+    """Returns the percentage uncertainty of a magnitude from its absolute uncertainty.
+
+    Parameters
+    ----------
+    value : num
+        Value of the magnitude.
+    absolute_uncertainty : num
+        Absolute uncertainty of the magnitude.
+
+    Returns
+    -------
+    num
+        Percentage uncertainty of the magnitude.
+    """
+    # TODO: this method may be in a separate module, it is not a characteristic of a neutron source
     return absolute_uncertainty / value * 100
