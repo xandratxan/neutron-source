@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import exp, log, sqrt
 
 time_uncertainty_days = 1
 
@@ -63,6 +64,32 @@ class Source:
             Source decay time from the source's calibration date (value, uncertainty, percentage uncertainty).
         """
         return elapsed_time(self.calibration_date, date)
+
+    def decay_factor(self, initial_date, final_date):
+        """Returns the source decay factor and its uncertainty.
+
+        The decay factor is non-dimensional.
+
+        Parameters
+        ----------
+        initial_date : str
+            Initial date to compute the source decay factor.
+        final_date : str
+            Final date to compute the source decay factor.
+
+        Returns
+        -------
+        tuple
+            Source decay factor between the initial and final dates (value, uncertainty, percentage uncertainty).
+        """
+        # TODO: test fails
+        t12, u_t12, ur_t12 = self.half_life
+        t, u_t, ur_t = elapsed_time(initial_date, final_date)
+        t12 = t12 * 365.242  # half-life from years to days
+        value = decay_factor_value(t, t12)
+        percentage = decay_factor_uncertainty(t, t12, ur_t, ur_t12)
+        uncertainty = absolute_uncertainty(value, percentage)
+        return value, uncertainty, percentage
 
 
 class Cf(Source):
@@ -153,3 +180,70 @@ def percentage_uncertainty(value, absolute_uncertainty):
     """
     # TODO: this method may be in a separate module, it is not a characteristic of a neutron source
     return absolute_uncertainty / value * 100
+
+
+def absolute_uncertainty(value, percentage_uncertainty):
+    """Returns the percentage uncertainty of a magnitude from its absolute uncertainty.
+
+    Parameters
+    ----------
+    value : num
+        Value of the magnitude.
+    percentage_uncertainty : num
+        Percentage uncertainty of the magnitude.
+
+    Returns
+    -------
+    num
+        Absolute uncertainty of the magnitude.
+    """
+    # TODO: this method may be in a separate module, it is not a characteristic of a neutron source
+    return value * percentage_uncertainty / 100
+
+
+def decay_factor_value(decay_time, half_life):
+    """Returns the value of source decay factor.
+
+    The value of decay factor is non-dimensional.
+    The units of decay time and half life must be the same.
+
+    Parameters
+    ----------
+    decay_time : num
+        Value of source decay time.
+    half_life : num
+        Value of source half life.
+
+    Returns
+    -------
+    num
+        Value of source decay factor.
+    """
+    return exp(-log(2) * decay_time / half_life)
+
+
+def decay_factor_uncertainty(decay_time, half_life, decay_time_relative_uncertainty, half_life_relative_uncertainty):
+    """Returns the relative uncertainty of source decay factor.
+
+    The value of decay factor is non-dimensional.
+    The units of decay time and half life must be the same.
+
+    Parameters
+    ----------
+    decay_time : num
+        Value of source decay time.
+    half_life : num
+        Value of source half life.
+    decay_time_relative_uncertainty : num
+        Relative uncertainty of source decay time.
+    half_life_relative_uncertainty : num
+        Relative uncertainty of source half life.
+
+    Returns
+    -------
+    num
+        Relative uncertainty of source decay factor.
+    """
+    square_sum = decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2
+    multiplication_factor = (log(2) * decay_time / half_life) ** 2
+    return sqrt(multiplication_factor * square_sum)

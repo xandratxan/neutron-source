@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import exp, log, sqrt
 
 import pytest
 import src.source as source
@@ -77,6 +78,13 @@ def test_percentage_uncertainty():
     assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
 
 
+def test_absolute_uncertainty():
+    value, percentage_uncertainty = 100, 10
+    expected = value * percentage_uncertainty / 100
+    actual = source.percentage_uncertainty(100, 10)
+    assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
+
+
 def test_elapsed_time():
     initial_date, final_date = '2012/01/01', '2012/12/31'
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
@@ -96,3 +104,34 @@ def test_decay_time(example_source):
     expected = source.elapsed_time(initial_date, final_date)
     actual = example_source.decay_time('2013/05/20')
     assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
+
+
+def test_decay_factor_value():
+    decay_time, half_life = 1, 300
+    expected = exp(-log(2) * decay_time / half_life)
+    actual = source.decay_factor_value(1, 300)
+    assert actual == expected, f'Source decay factor value should be {expected}, not {actual}.'
+
+
+def test_decay_factor_uncertainty():
+    decay_time, half_life = 1, 300
+    decay_time_relative_uncertainty, half_life_relative_uncertainty = 10, 1
+    square_sum = decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2
+    multiplication_factor = (log(2) * decay_time / half_life) ** 2
+    expected = sqrt(multiplication_factor * square_sum)
+    actual = source.decay_factor_uncertainty(1, 300, 10, 1)
+    assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
+
+
+def test_decay_factor(example_source):
+    # TODO: test fails
+    initial_date, final_date = '2012/01/01', '2012/12/31'
+    t12, u_t12, ur_t12 = example_source.half_life
+    t, u_t, ur_t = source.elapsed_time(initial_date, final_date)
+    t12 = t12 * 365.242  # half-life from years to days
+    value = exp(-log(2) * t / t12)
+    percentage = sqrt((log(2) * t / t/12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    uncertainty = value * percentage / 100
+    expected = (value, uncertainty, percentage)
+    actual = example_source.decay_factor('2012/01/01', '2012/12/31')
+    assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
