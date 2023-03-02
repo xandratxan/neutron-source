@@ -1,3 +1,8 @@
+from datetime import datetime
+
+time_uncertainty_days = 1
+
+
 class Source:
     """
     Generic radionuclide neutron source.
@@ -23,6 +28,7 @@ class Source:
     total_air_scatter_component : tuple
         Total air scatter component of the source in 1/cm (value, uncertainty, percentage uncertainty).
     """
+
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -70,6 +76,7 @@ class Cf(Source):
         Total air scatter component of the source in 1/cm (value, uncertainty, percentage uncertainty):
         :math:`A` = 1.2% or 0.00012 cm\ :sup:`-1` ± 15%.
     """
+
     def __init__(self):
         super().__init__()
         self.name = '252-Cf'
@@ -81,3 +88,34 @@ class Cf(Source):
         self.fluence_to_dose_conversion_factor = (385, 385 * 1 / 100, 1)
         self.neutron_effectiveness = (0.5, 0.1, 0.1 / 0.5 * 100)
         self.total_air_scatter_component = (0.00012, 0.00012 * 15 / 100, 15)
+
+
+def elapsed_time(initial_date, final_date):
+    """Returns the elapsed time between two dates and its uncertainty.
+
+    The unit of the elapsed time is day.
+    Standard uncertainty of the elapsed time is assumed to be 1 day.
+
+    Parameters
+    ----------
+    initial_date : str
+        Initial date to compute the elapsed time.
+    final_date : str
+        Final date to compute the elapsed time.
+
+    Returns
+    -------
+    tuple
+        Elapsed time between the initial and final dates (value, uncertainty, percentage uncertainty).
+    """
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    time = final_date - initial_date
+    time = time.days
+    uncertainty = time_uncertainty_days
+    percentage = percentage_uncertainty(time, uncertainty)
+    return time, uncertainty, percentage
+
+
+def percentage_uncertainty(value, absolute_uncertainty):
+    return absolute_uncertainty / value * 100

@@ -1,11 +1,13 @@
+from datetime import datetime
+
 import pytest
-from src.source import Cf
+import src.source as source
 
 
 @pytest.fixture
 def example_source():
-    source = Cf()
-    return source
+    example = source.Cf()
+    return example
 
 
 def test_source_representation(example_source):
@@ -66,3 +68,23 @@ def test_source_total_air_scatter_component(example_source):
     expected = (0.00012, 0.00012 * 15 / 100, 15)
     actual = example_source.total_air_scatter_component
     assert actual == expected, f'Source total air scatter component should be {expected}.'
+
+
+def test_percentage_uncertainty():
+    value, absolute_uncertainty = 100, 10
+    expected = absolute_uncertainty / value * 100
+    actual = source.percentage_uncertainty(100, 1)
+    assert actual == expected, f'Percentage uncertainty should be {expected}.'
+
+
+def test_elapsed_time():
+    initial_date, final_date = '2012/01/01', '2012/12/31'
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    time = final_date - initial_date
+    time = time.days
+    uncertainty = source.time_uncertainty_days
+    percentage = source.percentage_uncertainty(time, uncertainty)
+    expected = time, uncertainty, percentage
+    actual = source.elapsed_time('2012/01/01', '2012/12/31')
+    assert actual == expected, f'Elapsed time should be {expected}.'
