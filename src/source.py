@@ -46,6 +46,24 @@ class Source:
     def __str__(self):
         return f'{self.name} source'
 
+    def decay_time(self, date):
+        """Returns the source decay time and its uncertainty.
+
+        The unit of the elapsed time is day.
+        Standard uncertainty of the elapsed time is assumed to be 1 day.
+
+        Parameters
+        ----------
+        date : str
+            Date to compute the elapsed time.
+
+        Returns
+        -------
+        tuple
+            Source decay time from the source's calibration date (value, uncertainty, percentage uncertainty).
+        """
+        return elapsed_time(self.calibration_date, date)
+
 
 class Cf(Source):
     """252-Cf radionuclide neutron source from LPN.

@@ -88,3 +88,11 @@ def test_elapsed_time():
     expected = time, uncertainty, percentage
     actual = source.elapsed_time('2012/01/01', '2012/12/31')
     assert actual == expected, f'Elapsed time should be {expected}, not {actual}.'
+
+
+def test_decay_time(example_source):
+    initial_date = example_source.calibration_date
+    final_date = '2013/05/20'
+    expected = source.elapsed_time(initial_date, final_date)
+    actual = example_source.decay_time('2013/05/20')
+    assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
