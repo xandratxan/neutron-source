@@ -2,6 +2,8 @@ from datetime import datetime
 from math import exp, log, sqrt
 
 import pytest
+
+import src.equations as eq
 import src.source as source
 
 
@@ -42,7 +44,7 @@ def test_source_half_life(example_source):
 
 
 def test_source_anisotropy_factor(example_source):
-    expected = (1.051, 0.019, 0.019 / 1.051 * 100)  # DT-LMRI-2201
+    expected = (1.051, 0.019, 0.019 / 1.051 * 100)
     actual = example_source.anisotropy_factor
     assert actual == expected, f'Source anisotropy factor should be {expected}, not {actual}.'
 
@@ -71,56 +73,12 @@ def test_source_total_air_scatter_component(example_source):
     assert actual == expected, f'Source total air scatter component should be {expected}, not {actual}.'
 
 
-def test_percentage_uncertainty():
-    value, absolute_uncertainty = 100, 10
-    expected = absolute_uncertainty / value * 100
-    actual = source.percentage_uncertainty(100, 10)
-    assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
-
-
-def test_absolute_uncertainty():
-    value, percentage_uncertainty = 100, 10
-    expected = value * percentage_uncertainty / 100
-    actual = source.percentage_uncertainty(100, 10)
-    assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
-
-
-def test_elapsed_time():
-    initial_date, final_date = '2012/01/01', '2012/12/31'
-    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
-    final_date = datetime.strptime(final_date, '%Y/%m/%d')
-    time = final_date - initial_date
-    time = time.days
-    uncertainty = source.time_uncertainty_days
-    percentage = source.percentage_uncertainty(time, uncertainty)
-    expected = time, uncertainty, percentage
-    actual = source.elapsed_time('2012/01/01', '2012/12/31')
-    assert actual == expected, f'Elapsed time should be {expected}, not {actual}.'
-
-
 def test_decay_time(example_source):
     initial_date = example_source.calibration_date
     final_date = '2013/05/20'
-    expected = source.elapsed_time(initial_date, final_date)
+    expected = eq.elapsed_time(initial_date, final_date)
     actual = example_source.decay_time('2013/05/20')
     assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
-
-
-def test_decay_factor_value():
-    decay_time, half_life = 1, 300
-    expected = exp(-log(2) * decay_time / half_life)
-    actual = source.decay_factor_value(1, 300)
-    assert actual == expected, f'Source decay factor value should be {expected}, not {actual}.'
-
-
-def test_decay_factor_uncertainty():
-    decay_time, half_life = 1, 300
-    decay_time_relative_uncertainty, half_life_relative_uncertainty = 10, 1
-    square_sum = decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2
-    multiplication_factor = (log(2) * decay_time / half_life) ** 2
-    expected = sqrt(multiplication_factor * square_sum)
-    actual = source.decay_factor_uncertainty(1, 300, 10, 1)
-    assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
 
 
 def test_decay_factor(example_source):
@@ -133,13 +91,13 @@ def test_decay_factor(example_source):
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
     t = final_date - initial_date
     t = t.days
-    u_t = source.time_uncertainty_days
+    u_t = eq.u_t_days
     ur_t = u_t / t * 100
     # Unit conversion
     t12 = t12 * 365.242
     # Decay factor
     f = exp(-log(2) * t / t12)
-    ur_f = sqrt((log(2) * t / t/12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    ur_f = sqrt((log(2) * t / t / 12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
     u_f = f * ur_f / 100
     expected = (f, u_f, ur_f)
     # Actual value
