@@ -1,8 +1,9 @@
 from datetime import datetime
-from math import exp, log, sqrt
+from math import exp, log, sqrt, pi
 
 u_t_days = 1
 years_to_days = 365.242
+psv_s_to_usv_h = 0.0036
 
 
 def elapsed_time(initial_date, final_date):
@@ -161,3 +162,63 @@ def strength_relative_uncertainty(t, t12, ur_b0, ur_t, ur_t12):
         Value of the source strength at a specific time.
     """
     return sqrt(ur_b0 ** 2 + (log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+
+
+def fluence_rate_value(b, fi, l):
+    # TODO
+    return b * fi / 4 / pi / l ** 2
+
+
+def fluence_rate_relative_uncertainty(ur_b, ur_fi, ur_l):
+    # TODO
+    return sqrt(ur_b ** 2 + ur_fi ** 2 + 4 * ur_l ** 2)
+
+
+def ambient_dose_equivalent_value(f, hf):
+    # TODO
+    return hf * f * psv_s_to_usv_h
+
+
+def ambient_dose_equivalent_relative_uncertainty(ur_hf, ur_f):
+    # TODO
+    return sqrt(ur_hf ** 2 + ur_f ** 2)
+
+
+def magnitude_product():
+    # TODO
+    pass
+
+
+def magnitude_division():
+    # TODO
+    pass
+
+
+def magnitude_summation():
+    # TODO
+    pass
+
+
+def magnitude_difference():
+    # TODO
+    pass
+
+
+def magnitude_product_uncertainty():
+    # TODO
+    pass
+
+
+def magnitude_division_uncertainty():
+    # TODO
+    pass
+
+
+def magnitude_summation_uncertainty():
+    # TODO
+    pass
+
+
+def magnitude_difference_uncertainty():
+    # TODO
+    pass

@@ -175,3 +175,17 @@ def test_source_strength_at_calibration_date(example_source):
     expected = example_source.calibration_strength
     actual = example_source.strength(date='2012/05/20')
     assert actual == expected, f'Source strength should be {expected}, not {actual}.'
+
+
+def test_fluence_rate():
+    # TODO
+    expected = None
+    actual = example_source.fluence_rate(date=None, distance=None)
+    assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+
+
+def test_ambient_dose_equivalent_rate():
+    # TODO
+    expected = None
+    actual = example_source.ambient_dose_equivalent_rate(date=None, distance=None)
+    assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'

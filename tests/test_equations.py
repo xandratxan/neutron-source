@@ -57,3 +57,71 @@ def test_strength_relative_uncertainty():
     expected = sqrt(ur_b0 ** 2 + (log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
     actual = eq.strength_relative_uncertainty(t=1, t12=300, ur_b0=5, ur_t=10, ur_t12=1)
     assert actual == expected, f'Source strength relative uncertainty should be {expected}, not {actual}.'
+
+
+def test_fluence_rate_value():
+    # TODO
+    expected = None
+    actual = eq.fluence_rate_value(b=None, fi=None, l=None)
+    assert actual == expected, f'Fluence rate value should be {expected}, not {actual}.'
+
+
+def test_fluence_rate_relative_uncertainty():
+    # TODO
+    expected = None
+    actual = eq.fluence_rate_relative_uncertainty(ur_b=None, ur_fi=None, ur_l=None)
+    assert actual == expected, f'Fluence rate value should be {expected}, not {actual}.'
+
+
+def test_ambient_dose_equivalent_value():
+    # TODO
+    expected = None
+    actual = eq.fluence_rate_value(b=None, fi=None, l=None)
+    assert actual == expected, f'Fluence rate value should be {expected}, not {actual}.'
+
+
+def test_ambient_dose_equivalent_uncertainty():
+    # TODO
+    expected = None
+    actual = eq.fluence_rate_relative_uncertainty(ur_b=None, ur_fi=None, ur_l=None)
+    assert actual == expected, f'Fluence rate value should be {expected}, not {actual}.'
+
+
+def test_magnitude_product():
+    # TODO
+    pass
+
+
+def test_magnitude_division():
+    # TODO
+    pass
+
+
+def test_magnitude_summation():
+    # TODO
+    pass
+
+
+def test_magnitude_difference():
+    # TODO
+    pass
+
+
+def test_magnitude_product_uncertainty():
+    # TODO
+    pass
+
+
+def test_magnitude_division_uncertainty():
+    # TODO
+    pass
+
+
+def test_magnitude_summation_uncertainty():
+    # TODO
+    pass
+
+
+def test_magnitude_difference_uncertainty():
+    # TODO
+    pass

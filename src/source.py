@@ -161,6 +161,14 @@ class Source:
         u_b = eq.absolute_uncertainty(m=b, ur_m=ur_b)
         return b, u_b, ur_b
 
+    def fluence_rate(self, date, distance):
+        # TODO
+        pass
+
+    def ambient_dose_equivalent_rate(self, date, distance):
+        # TODO
+        pass
+
 
 class Cf(Source):
     """252-Cf radionuclide neutron source from LPN.
