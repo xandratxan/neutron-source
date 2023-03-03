@@ -20,7 +20,7 @@ def test_source_representation(example_source):
 
 
 def test_source_string(example_source):
-    expected = '252-Cf source'
+    expected = '252-Cf radionuclide neutron source'
     actual = str(example_source)
     assert actual == expected, f'Source string should be {expected}, not {actual}.'
 
@@ -76,30 +76,67 @@ def test_source_total_air_scatter_component(example_source):
 def test_decay_time(example_source):
     initial_date = example_source.calibration_date
     final_date = '2013/05/20'
-    expected = eq.elapsed_time(initial_date, final_date)
-    actual = example_source.decay_time('2013/05/20')
-    assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
-
-
-def test_decay_factor(example_source):
-    # TODO: test fails
-    # Data
-    initial_date, final_date = '2012/01/01', '2012/12/31'
-    t12, u_t12, ur_t12 = example_source.half_life
-    # Elapsed time
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
     t = final_date - initial_date
     t = t.days
     u_t = eq.u_t_days
     ur_t = u_t / t * 100
-    # Unit conversion
-    t12 = t12 * 365.242
-    # Decay factor
+    expected = t, u_t, ur_t
+    actual = example_source.decay_time(date='2013/05/20')
+    assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
+
+
+def test_decay_factor_one_date(example_source):
+    # TODO: test fails
+    # Source half life
+    t12, u_t12, ur_t12 = example_source.half_life
+    t12 = t12 * source.years_to_days
+    u_t12 = u_t12 * source.years_to_days
+    # Decay time
+    initial_date = example_source.calibration_date
+    final_date = '2013/05/20'
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    t = final_date - initial_date
+    t = t.days
+    u_t = eq.u_t_days
+    ur_t = u_t / t * 100
+    # Decay factor value
     f = exp(-log(2) * t / t12)
-    ur_f = sqrt((log(2) * t / t / 12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    # Decay factor relative uncertainty
+    ur_f = sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    # Decay factor absolute uncertainty
     u_f = f * ur_f / 100
+    # Expected value
     expected = (f, u_f, ur_f)
     # Actual value
-    actual = example_source.decay_factor('2012/01/01', '2012/12/31')
+    actual = example_source.decay_factor(final_date='2013/05/20')
+    assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
+
+
+def test_decay_factor_two_dates(example_source):
+    # Source half life
+    t12, u_t12, ur_t12 = example_source.half_life
+    t12 = t12 * source.years_to_days
+    u_t12 = u_t12 * source.years_to_days
+    # Decay time
+    initial_date = '2016/05/20'
+    final_date = '2020/05/20'
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    t = final_date - initial_date
+    t = t.days
+    u_t = eq.u_t_days
+    ur_t = u_t / t * 100
+    # Decay factor value
+    f = exp(-log(2) * t / t12)
+    # Decay factor relative uncertainty
+    ur_f = sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    # Decay factor absolute uncertainty
+    u_f = f * ur_f / 100
+    # Expected value
+    expected = (f, u_f, ur_f)
+    # Actual value
+    actual = example_source.decay_factor(final_date='2020/05/20', initial_date='2016/05/20')
     assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
