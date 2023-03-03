@@ -8,41 +8,38 @@ def test_elapsed_time():
     initial_date, final_date = '2012/01/01', '2012/12/31'
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
-    time = final_date - initial_date
-    time = time.days
-    uncertainty = eq.u_t_days
-    percentage = eq.percentage_uncertainty(time, uncertainty)
-    expected = time, uncertainty, percentage
-    actual = eq.elapsed_time('2012/01/01', '2012/12/31')
+    t = final_date - initial_date
+    t = t.days
+    u_t = eq.u_t_days
+    ur_t = u_t / t * 100
+    expected = t, u_t, ur_t
+    actual = eq.elapsed_time(initial_date='2012/01/01', final_date='2012/12/31')
     assert actual == expected, f'Elapsed time should be {expected}, not {actual}.'
 
 
 def test_percentage_uncertainty():
-    value, absolute_uncertainty = 100, 10
-    expected = absolute_uncertainty / value * 100
-    actual = eq.percentage_uncertainty(100, 10)
+    m, u_m = 100, 10
+    expected = u_m / m * 100
+    actual = eq.percentage_uncertainty(m=100, u_m=10)
     assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
 
 
 def test_absolute_uncertainty():
-    value, percentage_uncertainty = 100, 10
-    expected = value * percentage_uncertainty / 100
-    actual = eq.percentage_uncertainty(100, 10)
-    assert actual == expected, f'Percentage uncertainty should be {expected}, not {actual}.'
+    m, ur_m = 100, 10
+    expected = m * ur_m / 100
+    actual = eq.absolute_uncertainty(m=100, ur_m=10)
+    assert actual == expected, f'Absolute uncertainty should be {expected}, not {actual}.'
 
 
 def test_decay_factor_value():
-    decay_time, half_life = 1, 300
-    expected = exp(-log(2) * decay_time / half_life)
-    actual = eq.decay_factor_value(1, 300)
+    t, t12 = 1, 300
+    expected = exp(-log(2) * t / t12)
+    actual = eq.decay_factor_value(t=1, t12=300)
     assert actual == expected, f'Source decay factor value should be {expected}, not {actual}.'
 
 
 def test_decay_factor_uncertainty():
-    decay_time, half_life = 1, 300
-    decay_time_relative_uncertainty, half_life_relative_uncertainty = 10, 1
-    square_sum = decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2
-    multiplication_factor = (log(2) * decay_time / half_life) ** 2
-    expected = sqrt(multiplication_factor * square_sum)
-    actual = eq.decay_factor_uncertainty(1, 300, 10, 1)
+    t, t12, ur_t, ur_t12 = 1, 300, 10, 1
+    expected = sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    actual = eq.decay_factor_uncertainty(t=1, t12=300, ur_t=10, ur_t12=1)
     assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
