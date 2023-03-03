@@ -24,11 +24,11 @@ def elapsed_time(initial_date, final_date):
     """
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
-    time = final_date - initial_date
-    time = time.days
-    uncertainty = u_t_days
-    percentage = percentage_uncertainty(time, uncertainty)
-    return time, uncertainty, percentage
+    t = final_date - initial_date
+    t = t.days
+    u_t = u_t_days
+    ur_t = percentage_uncertainty(t, u_t)
+    return t, u_t, ur_t
 
 
 def percentage_uncertainty(m, u_m):
