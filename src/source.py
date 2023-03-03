@@ -131,9 +131,9 @@ class Source:
             t, u_t, ur_t = ec.elapsed_time(initial_date=initial_date, final_date=final_date)
         else:
             t, u_t, ur_t = ec.elapsed_time(initial_date=self.calibration_date, final_date=final_date)
-        f = ec.decay_factor_value(t, t12)
-        ur_f = ec.decay_factor_uncertainty(t, t12, ur_t, ur_t12)
-        u_f = ec.absolute_uncertainty(f, ur_f)
+        f = ec.decay_factor_value(t=t, t12=t12)
+        ur_f = ec.decay_factor_uncertainty(t=t, t12=t12, ur_t=ur_t, ur_t12=ur_t12)
+        u_f = ec.absolute_uncertainty(m=f, ur_m=ur_f)
         return f, u_f, ur_f
 
 
