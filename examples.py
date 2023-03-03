@@ -61,11 +61,14 @@ print()
 dt = cf.decay_time(date='2020/05/20')
 # Compute source decay time on a date
 df = cf.decay_factor(final_date='2020/05/20')
+# Compute source strength on a date
+s = cf.strength(date='2020/05/20')
 print(
     f'Initial date: 2012/05/20, final date 2020/05/20\n'
     f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
     f'Decay time (days): {dt[0]} \u00B1 {dt[1]} ({dt[2]})\n'
-    f'Decay factor (non-dimensional): {df[0]} \u00B1 {df[1]} ({df[2]})'
+    f'Decay factor (non-dimensional): {df[0]} \u00B1 {df[1]} ({df[2]})\n'
+    f'Strength (1/s): {s[0]} \u00B1 {s[1]} ({s[2]})'
 )
 print()
 # Compute source decay time between two dates

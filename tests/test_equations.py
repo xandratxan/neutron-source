@@ -43,3 +43,17 @@ def test_decay_factor_uncertainty():
     expected = sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
     actual = eq.decay_factor_uncertainty(t=1, t12=300, ur_t=10, ur_t12=1)
     assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
+
+
+def test_strength_value():
+    b0, t, t12 = 10 ** 8, 1, 300
+    expected = b0 * exp(-log(2) * t / t12)
+    actual = eq.strength_value(b0=10 ** 8, t=1, t12=300)
+    assert actual == expected, f'Source strength value should be {expected}, not {actual}.'
+
+
+def test_strength_relative_uncertainty():
+    t, t12, ur_b0, ur_t, ur_t12 = 1, 300, 5, 10, 1
+    expected = sqrt(ur_b0 ** 2 + (log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    actual = eq.strength_relative_uncertainty(t=1, t12=300, ur_b0=5, ur_t=10, ur_t12=1)
+    assert actual == expected, f'Source strength relative uncertainty should be {expected}, not {actual}.'

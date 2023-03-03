@@ -2,6 +2,7 @@ from datetime import datetime
 from math import exp, log, sqrt
 
 u_t_days = 1
+years_to_days = 365.242
 
 
 def elapsed_time(initial_date, final_date):
@@ -36,14 +37,14 @@ def percentage_uncertainty(m, u_m):
 
     Parameters
     ----------
-    m : num
+    m : int or float
         Value of the magnitude.
-    u_m : num
+    u_m : int or float
         Absolute uncertainty of the magnitude.
 
     Returns
     -------
-    num
+    float
         Percentage uncertainty of the magnitude.
     """
     return u_m / m * 100
@@ -54,14 +55,14 @@ def absolute_uncertainty(m, ur_m):
 
     Parameters
     ----------
-    m : num
+    m : int or float
         Value of the magnitude.
-    ur_m : num
+    ur_m : int or float
         Percentage uncertainty of the magnitude.
 
     Returns
     -------
-    num
+    float
         Absolute uncertainty of the magnitude.
     """
     return m * ur_m / 100
@@ -70,19 +71,19 @@ def absolute_uncertainty(m, ur_m):
 def decay_factor_value(t, t12):
     """Returns the value of source decay factor.
 
-    The value of decay factor is non-dimensional.
+    The decay factor is non-dimensional.
     The units of decay time and half life must be the same.
 
     Parameters
     ----------
-    t : num
+    t : int or float
         Value of source decay time.
-    t12 : num
+    t12 : int or float
         Value of source half life.
 
     Returns
     -------
-    num
+    float
         Value of source decay factor.
     """
     return exp(-log(2) * t / t12)
@@ -91,23 +92,72 @@ def decay_factor_value(t, t12):
 def decay_factor_uncertainty(t, t12, ur_t, ur_t12):
     """Returns the relative uncertainty of source decay factor.
 
-    The value of decay factor is non-dimensional.
     The units of decay time and half life must be the same.
+    Standard uncertainty of the elapsed time is assumed to be 1 day.
 
     Parameters
     ----------
-    t : num
+    t : int or float
         Value of source decay time.
-    t12 : num
+    t12 : int or float
         Value of source half life.
-    ur_t : num
+    ur_t : int or float
         Relative uncertainty of source decay time.
-    ur_t12 : num
+    ur_t12 : int or float
         Relative uncertainty of source half life.
 
     Returns
     -------
-    num
+    float
         Relative uncertainty of source decay factor.
     """
     return sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+
+
+def strength_value(b0, t, t12):
+    """Returns the value of the source strength at a specific time.
+
+    The unit of the strength is 1/s.
+    The unit of the calibration strength is 1/s.
+    The units of decay time and half life must be the same.
+
+    Parameters
+    ----------
+    b0: int or float
+        Value of source calibration strength.
+    t : int or float
+        Value of source decay time.
+    t12 : int or float
+        Value of source half life.
+
+    Returns
+    -------
+    float
+        Value of the source strength at a specific time.
+    """
+    return b0 * exp(-log(2) * t / t12)
+
+
+def strength_relative_uncertainty(t, t12, ur_b0, ur_t, ur_t12):
+    """Returns the relative uncertainty of the source strength at a specific time.
+
+    The units of decay time and half life must be the same.
+
+    Parameters
+    ----------
+    t : int or float
+        Value of source decay time.
+    t12 : int or float
+        Value of source half life.
+    ur_b0: int or float
+        Relative uncertainty of source calibration strength.
+    ur_t : int or float
+        Relative uncertainty of source decay time.
+    ur_t12 : int or float
+        Relative uncertainty of source half life.
+    Returns
+    -------
+    float
+        Value of the source strength at a specific time.
+    """
+    return sqrt(ur_b0 ** 2 + (log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))

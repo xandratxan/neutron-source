@@ -1,6 +1,4 @@
-import src.equations as ec
-
-years_to_days = 365.242
+import src.equations as eq
 
 
 class Source:
@@ -104,7 +102,7 @@ class Source:
         tuple
             Source decay time from the source's calibration date (value, uncertainty, percentage uncertainty).
         """
-        return ec.elapsed_time(initial_date=self.calibration_date, final_date=date)
+        return eq.elapsed_time(initial_date=self.calibration_date, final_date=date)
 
     def decay_factor(self, final_date, initial_date=None):
         """Returns the source decay factor and its uncertainty.
@@ -123,18 +121,45 @@ class Source:
         tuple
             Source decay factor between the initial and final dates (value, uncertainty, percentage uncertainty).
         """
-        # TODO: test fails
         t12, u_t12, ur_t12 = self.half_life
-        t12 = t12 * years_to_days
-        u_t12 = u_t12 * years_to_days
+        t12 = t12 * eq.years_to_days
+        u_t12 = u_t12 * eq.years_to_days
         if initial_date:
-            t, u_t, ur_t = ec.elapsed_time(initial_date=initial_date, final_date=final_date)
+            t, u_t, ur_t = eq.elapsed_time(initial_date=initial_date, final_date=final_date)
         else:
-            t, u_t, ur_t = ec.elapsed_time(initial_date=self.calibration_date, final_date=final_date)
-        f = ec.decay_factor_value(t=t, t12=t12)
-        ur_f = ec.decay_factor_uncertainty(t=t, t12=t12, ur_t=ur_t, ur_t12=ur_t12)
-        u_f = ec.absolute_uncertainty(m=f, ur_m=ur_f)
+            t, u_t, ur_t = eq.elapsed_time(initial_date=self.calibration_date, final_date=final_date)
+        f = eq.decay_factor_value(t=t, t12=t12)
+        ur_f = eq.decay_factor_uncertainty(t=t, t12=t12, ur_t=ur_t, ur_t12=ur_t12)
+        u_f = eq.absolute_uncertainty(m=f, ur_m=ur_f)
         return f, u_f, ur_f
+
+    def strength(self, date):
+        """Returns the source strength at the specified date and its uncertainty.
+
+        The unit of the strength is 1/s.
+        If date is the source's calibration date, return the source's calibration strength.
+
+        Parameters
+        ----------
+        date : str
+            Date to compute the source strength.
+
+        Returns
+        -------
+        tuple
+            Source strength at the specified date, in 1/s (value, uncertainty, percentage uncertainty).
+        """
+        if date == self.calibration_date:
+            return self.calibration_strength
+        b0, u_b0, ur_b0 = self.calibration_strength
+        t12, u_t12, ur_t12 = self.half_life
+        t12 = t12 * eq.years_to_days
+        u_t12 = u_t12 * eq.years_to_days
+        t, u_t, ur_t = self.decay_time(date=date)
+        b = eq.strength_value(b0, t, t12)
+        ur_b = eq.strength_relative_uncertainty(t, t12, ur_b0, ur_t, ur_t12)
+        u_b = eq.absolute_uncertainty(m=b, ur_m=ur_b)
+        return b, u_b, ur_b
 
 
 class Cf(Source):

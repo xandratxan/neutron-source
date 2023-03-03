@@ -91,8 +91,8 @@ def test_decay_factor_one_date(example_source):
     # TODO: test fails
     # Source half life
     t12, u_t12, ur_t12 = example_source.half_life
-    t12 = t12 * source.years_to_days
-    u_t12 = u_t12 * source.years_to_days
+    t12 = t12 * eq.years_to_days
+    u_t12 = u_t12 * eq.years_to_days
     # Decay time
     initial_date = example_source.calibration_date
     final_date = '2013/05/20'
@@ -118,8 +118,8 @@ def test_decay_factor_one_date(example_source):
 def test_decay_factor_two_dates(example_source):
     # Source half life
     t12, u_t12, ur_t12 = example_source.half_life
-    t12 = t12 * source.years_to_days
-    u_t12 = u_t12 * source.years_to_days
+    t12 = t12 * eq.years_to_days
+    u_t12 = u_t12 * eq.years_to_days
     # Decay time
     initial_date = '2016/05/20'
     final_date = '2020/05/20'
@@ -140,3 +140,32 @@ def test_decay_factor_two_dates(example_source):
     # Actual value
     actual = example_source.decay_factor(final_date='2020/05/20', initial_date='2016/05/20')
     assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
+
+
+def test_source_strength(example_source):
+    # Calibration strength
+    b0, u_b0, ur_b0 = example_source.calibration_strength
+    # Source half life
+    t12, u_t12, ur_t12 = example_source.half_life
+    t12 = t12 * eq.years_to_days
+    u_t12 = u_t12 * eq.years_to_days
+    # Decay time
+    initial_date = example_source.calibration_date
+    final_date = '2020/05/20'
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    t = final_date - initial_date
+    t = t.days
+    u_t = eq.u_t_days
+    ur_t = u_t / t * 100
+    # Source strength value
+    b = b0 * exp(-log(2) * t / t12)
+    # Source strength relative uncertainty
+    ur_b = sqrt(ur_b0 ** 2 + (log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    # Source strength absolute uncertainty
+    u_b = b * ur_b / 100
+    # Expected value
+    expected = (b, u_b, ur_b)
+    # Actual value
+    actual = example_source.strength(date='2020/05/20')
+    assert actual == expected, f'Source strength should be {expected}, not {actual}.'
