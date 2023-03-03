@@ -1,4 +1,4 @@
-import src.ecuations as ec
+import src.equations as ec
 
 years_to_days = 365.242
 
