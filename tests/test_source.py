@@ -125,13 +125,23 @@ def test_decay_factor_uncertainty():
 
 def test_decay_factor(example_source):
     # TODO: test fails
+    # Data
     initial_date, final_date = '2012/01/01', '2012/12/31'
     t12, u_t12, ur_t12 = example_source.half_life
-    t, u_t, ur_t = source.elapsed_time(initial_date, final_date)
-    t12 = t12 * 365.242  # half-life from years to days
-    value = exp(-log(2) * t / t12)
-    percentage = sqrt((log(2) * t / t/12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
-    uncertainty = value * percentage / 100
-    expected = (value, uncertainty, percentage)
+    # Elapsed time
+    initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
+    final_date = datetime.strptime(final_date, '%Y/%m/%d')
+    t = final_date - initial_date
+    t = t.days
+    u_t = source.time_uncertainty_days
+    ur_t = u_t / t * 100
+    # Unit conversion
+    t12 = t12 * 365.242
+    # Decay factor
+    f = exp(-log(2) * t / t12)
+    ur_f = sqrt((log(2) * t / t/12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
+    u_f = f * ur_f / 100
+    expected = (f, u_f, ur_f)
+    # Actual value
     actual = example_source.decay_factor('2012/01/01', '2012/12/31')
     assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'

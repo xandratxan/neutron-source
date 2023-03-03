@@ -83,12 +83,18 @@ class Source:
             Source decay factor between the initial and final dates (value, uncertainty, percentage uncertainty).
         """
         # TODO: test fails
+        print(f'initial_date {initial_date}, final_date {final_date}')
         t12, u_t12, ur_t12 = self.half_life
-        t, u_t, ur_t = elapsed_time(initial_date, final_date)
         t12 = t12 * 365.242  # half-life from years to days
+        print(f't12 {(t12, u_t12, ur_t12)}')
+        t, u_t, ur_t = elapsed_time(initial_date, final_date)
+        print(f't {(t, u_t, ur_t)}')
         value = decay_factor_value(t, t12)
+        print(f'f {value}')
         percentage = decay_factor_uncertainty(t, t12, ur_t, ur_t12)
+        print(f'ur_f {percentage}')
         uncertainty = absolute_uncertainty(value, percentage)
+        print(f'u_f {uncertainty}')
         return value, uncertainty, percentage
 
 
@@ -246,4 +252,9 @@ def decay_factor_uncertainty(decay_time, half_life, decay_time_relative_uncertai
     """
     square_sum = decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2
     multiplication_factor = (log(2) * decay_time / half_life) ** 2
-    return sqrt(multiplication_factor * square_sum)
+    result = sqrt(multiplication_factor * square_sum)
+    result = sqrt(
+        (log(2) * decay_time / half_life) ** 2 *
+        (decay_time_relative_uncertainty ** 2 + half_life_relative_uncertainty ** 2)
+    )
+    return result
