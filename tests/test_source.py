@@ -169,3 +169,9 @@ def test_source_strength(example_source):
     # Actual value
     actual = example_source.strength(date='2020/05/20')
     assert actual == expected, f'Source strength should be {expected}, not {actual}.'
+
+
+def test_source_strength_at_calibration_date(example_source):
+    expected = example_source.calibration_strength
+    actual = example_source.strength(date='2012/05/20')
+    assert actual == expected, f'Source strength should be {expected}, not {actual}.'
