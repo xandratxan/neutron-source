@@ -1,4 +1,4 @@
-from src.source import Source, Cf
+from src.source.source import Source, Cf
 
 #  Contents:
 #  1. Create your own source modifying generic source attributes
@@ -81,11 +81,11 @@ print()
 # Cf radionuclide neutron source characteristics in terms of time and distance
 # TODO
 # Compute source fluence rate at a distance on a date
-fr = cf.fluence_rate(date='2020/05/20', distance=(100, 1, 1))
-hr = cf.ambient_dose_equivalent_rate(date='2020/05/20', distance=(100, 1, 1))
-print(
-    f'Date 2020/05/20, distance 100 cm\n'
-    f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
-    f'Fluence rate (1/cm²s): {fr[0]} \u00B1 {fr[1]} ({fr[2]})\n'
-    f'Ambient dose equivalent rate (\u03BCSv/h): {hr[0]} \u00B1 {hr[1]} ({hr[2]})\n'
-)
+# fr = cf.fluence_rate(date='2020/05/20', distance=(100, 1, 1))
+# hr = cf.ambient_dose_equivalent_rate(date='2020/05/20', distance=(100, 1, 1))
+# print(
+#     f'Date 2020/05/20, distance 100 cm\n'
+#     f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
+#     f'Fluence rate (1/cm²s): {fr[0]} \u00B1 {fr[1]} ({fr[2]})\n'
+#     f'Ambient dose equivalent rate (\u03BCSv/h): {hr[0]} \u00B1 {hr[1]} ({hr[2]})\n'
+# )

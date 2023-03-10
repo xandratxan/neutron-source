@@ -3,8 +3,8 @@ from math import exp, log, sqrt
 
 import pytest
 
-import src.equations as eq
-import src.source as source
+import src.source.equations as eq
+import src.source.source as source
 
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def example_source():
 
 
 def test_source_representation(example_source):
-    expected = 'src.source.Cf()'
+    expected = 'src.source.source.Cf()'
     actual = example_source.__repr__()
     assert actual == expected, f'Source representation should be {expected}, not {actual}.'
 
@@ -177,15 +177,15 @@ def test_source_strength_at_calibration_date(example_source):
     assert actual == expected, f'Source strength should be {expected}, not {actual}.'
 
 
-def test_fluence_rate():
-    # TODO
-    expected = None
-    actual = example_source.fluence_rate(date=None, distance=None)
-    assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+# def test_fluence_rate():
+#     # TODO
+#     expected = None
+#     actual = example_source.fluence_rate(date=None, distance=None)
+#     assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
 
 
-def test_ambient_dose_equivalent_rate():
-    # TODO
-    expected = None
-    actual = example_source.ambient_dose_equivalent_rate(date=None, distance=None)
-    assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+# def test_ambient_dose_equivalent_rate():
+#     # TODO
+#     expected = None
+#     actual = example_source.ambient_dose_equivalent_rate(date=None, distance=None)
+#     assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'

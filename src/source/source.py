@@ -1,4 +1,4 @@
-import src.equations as eq
+import src.source.equations as eq
 
 
 class Source:
