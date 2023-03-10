@@ -1,3 +1,5 @@
+from magnitude import Magnitude
+
 import src.source.equations as eq
 
 
@@ -11,22 +13,24 @@ class Source:
         Name of the source.
     calibration_date : str
         Date of calibration of the source.
-    calibration_strength : tuple
-        Strength of the source at the calibration date in 1/s (value, uncertainty, percentage uncertainty).
-    half_life : tuple
-        Half life of the source in years (value, uncertainty, percentage uncertainty).
-    anisotropy_factor : tuple
-        Anisotropy factor of the source, non-dimensional (value, uncertainty, percentage uncertainty).
-    linear_attenuation_coefficient : tuple
-        Linear attenuation coefficient of the source in 1/cm (value, uncertainty, percentage uncertainty).
-    fluence_to_dose_conversion_factor : tuple
-        Fluence-to-dose conversion factor of the source in pSv·cm² (value, uncertainty, percentage uncertainty).
-    neutron_effectiveness : tuple
-        Neutron effectiveness of the source, non-dimensional (value, uncertainty, percentage uncertainty).
-    total_air_scatter_component : tuple
-        Total air scatter component of the source in 1/cm (value, uncertainty, percentage uncertainty).
+    calibration_strength : Magnitude
+        Strength of the source at the calibration date in 1/s (value and absolute or relative uncertainty).
+    half_life : Magnitude
+        Half life of the source in years (value and absolute or relative uncertainty).
+    anisotropy_factor : Magnitude
+        Anisotropy factor of the source, non-dimensional (value and absolute or relative uncertainty).
+    linear_attenuation_coefficient : Magnitude
+        Linear attenuation coefficient of the source in 1/cm (value and absolute or relative uncertainty).
+    fluence_to_dose_conversion_factor : Magnitude
+        Fluence-to-dose conversion factor of the source in pSv·cm² (value and absolute or relative uncertainty).
+    neutron_effectiveness : Magnitude
+        Neutron effectiveness of the source, non-dimensional (value and absolute or relative uncertainty).
+    total_air_scatter_component : Magnitude
+        Total air scatter component of the source in 1/cm (value and absolute or relative uncertainty).
     """
 
+    # TODO: Representation of non-dimensional magnitudes should be '10 ± 1 (10%)' instead of '10 ± 1 ND (10%)'
+    # TODO: Check units of source characteristics
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -55,35 +59,14 @@ class Source:
         return (
             f'Name: {self.name}\n'
             f'Calibration date: {self.calibration_date}\n'
-            f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
-            f'Calibration strength (1/s): '
-            f'{self.calibration_strength[0]} \u00B1 '
-            f'{self.calibration_strength[1]} '
-            f'({self.calibration_strength[2]})\n'
-            f'Half life (years): '
-            f'{self.half_life[0]} \u00B1 '
-            f'{self.half_life[1]} '
-            f'({self.half_life[2]})\n'
-            f'Anisotropy factor (non-dimensional): '
-            f'{self.anisotropy_factor[0]} \u00B1 '
-            f'{self.anisotropy_factor[1]} '
-            f'({self.anisotropy_factor[2]})\n'
-            f'Linear attenuation coefficient (1/cm): '
-            f'{self.linear_attenuation_coefficient[0]} \u00B1 '
-            f'{self.linear_attenuation_coefficient[1]} '
-            f'({self.linear_attenuation_coefficient[2]})\n'
-            f'Fluence to dose conversion factor (pSv·cm²): '
-            f'{self.fluence_to_dose_conversion_factor[0]} \u00B1 '
-            f'{self.fluence_to_dose_conversion_factor[1]} '
-            f'({self.fluence_to_dose_conversion_factor[2]})\n'
-            f'Neutron effectiveness (non-dimensional): '
-            f'{self.neutron_effectiveness[0]} \u00B1 '
-            f'{self.neutron_effectiveness[1]} '
-            f'({self.neutron_effectiveness[2]})\n'
-            f'Total air scatter component (1/cm): '
-            f'{self.total_air_scatter_component[0]} \u00B1 '
-            f'{self.total_air_scatter_component[1]} '
-            f'({self.total_air_scatter_component[2]})'
+            f'Magnitude: value \u00B1 uncertainty (percentage uncertainty)\n'
+            f'Calibration strength: {self.calibration_strength}\n'
+            f'Half life: {self.half_life}\n'
+            f'Anisotropy factor: {self.anisotropy_factor}\n'
+            f'Linear attenuation coefficient: {self.linear_attenuation_coefficient}\n'
+            f'Fluence to dose conversion factor: {self.fluence_to_dose_conversion_factor}\n'
+            f'Neutron effectiveness: {self.neutron_effectiveness}\n'
+            f'Total air scatter component: {self.total_air_scatter_component}'
         )
 
     def decay_time(self, date):
@@ -177,37 +160,37 @@ class Cf(Source):
     ----------
     calibration_date : str
         Date of calibration of the source: 2012-05-20.
-    calibration_strength : tuple
-        Strength of the source at the calibration date in 1/s (value, uncertainty, percentage uncertainty):
+    calibration_strength : Magnitude
+        Strength of the source at the calibration date in 1/s (value and absolute or relative uncertainty).
         :math:`B_0` = 5.471·10\ :sup:`8` s\ :sup:`-1` ± 1.3%.
-    half_life : tuple
-        Half life of the source in years (value, uncertainty, percentage uncertainty):
+    half_life : Magnitude
+        Half life of the source in years (value and absolute or relative uncertainty).
         :math:`T_{1/2}` = 2.6470 y ± 0.0026 y.
-    anisotropy_factor : tuple
-        Anisotropy factor of the source, non-dimensional (value, uncertainty, percentage uncertainty):
+    anisotropy_factor : Magnitude
+        Anisotropy factor of the source, non-dimensional (value and absolute or relative uncertainty).
         :math:`F_I(\theta)` = 1.051 ± 0.019.
-    linear_attenuation_coefficient : tuple
-        Linear attenuation coefficient of the source in 1/cm (value, uncertainty, percentage uncertainty):
+    linear_attenuation_coefficient : Magnitude
+        Linear attenuation coefficient of the source in 1/cm (value and absolute or relative uncertainty).
         :math:`\Sigma` = 1055·10\ :sup:`-7` cm\ :sup:`-1` ± 1,5%.
-    fluence_to_dose_conversion_factor : tuple
-        Fluence-to-dose conversion factor of the source in pSv·cm² (value, uncertainty, percentage uncertainty):
+    fluence_to_dose_conversion_factor : Magnitude
+        Fluence-to-dose conversion factor of the source in pSv·cm² (value and absolute or relative uncertainty).
         :math:`h_\Phi` = 385 pSv·cm\ :sup:`2` ± 1%.
-    neutron_effectiveness : tuple
-        Neutron effectiveness of the source, non-dimensional (value, uncertainty, percentage uncertainty):
+    neutron_effectiveness : Magnitude
+        Neutron effectiveness of the source, non-dimensional (value and absolute or relative uncertainty).
         :math:`\delta` = 0.5 ± 0.1.
-    total_air_scatter_component : tuple
-        Total air scatter component of the source in 1/cm (value, uncertainty, percentage uncertainty):
+    total_air_scatter_component : Magnitude
+        Total air scatter component of the source in 1/cm (value and absolute or relative uncertainty).
         :math:`A` = 1.2% or 0.00012 cm\ :sup:`-1` ± 15%.
     """
 
     def __init__(self):
         super().__init__()
-        self.name = '252-Cf'
+        self.name = '252-Cf radionuclide neutron source'
         self.calibration_date = '2012/05/20'
-        self.calibration_strength = (5.471E+08, 5.471E+08 * 1.3 / 100, 1.3)
-        self.half_life = (2.6470, 0.0026, 0.0026 / 2.6470 * 100)
-        self.anisotropy_factor = (1.051, 0.019, 0.019 / 1.051 * 100)
-        self.linear_attenuation_coefficient = (1055e-7, 1055e-7 * 1.5 / 100, 1.5)
-        self.fluence_to_dose_conversion_factor = (385, 385 * 1 / 100, 1)
-        self.neutron_effectiveness = (0.5, 0.1, 0.1 / 0.5 * 100)
-        self.total_air_scatter_component = (0.00012, 0.00012 * 15 / 100, 15)
+        self.calibration_strength = Magnitude(value=5.471E+08, unit='1/s', relative_uncertainty=0.013)
+        self.half_life = Magnitude(value=2.6470, unit='y', uncertainty=0.0026)
+        self.anisotropy_factor = Magnitude(value=1.051, unit='ND', uncertainty=0.019)
+        self.linear_attenuation_coefficient = Magnitude(value=1055e-7, unit='1/cm', relative_uncertainty=0.015)
+        self.fluence_to_dose_conversion_factor = Magnitude(value=385, unit='pSv·cm²', relative_uncertainty=0.01)
+        self.neutron_effectiveness = Magnitude(value=0.5, unit='ND', uncertainty=0.1)
+        self.total_air_scatter_component = Magnitude(value=0.00012, unit='1/cm', relative_uncertainty=0.15)
