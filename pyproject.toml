@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "neutron-source"
-description = 'Radionuclide neutron sources and the conventional true values of their radiologic quanties.'
+description = 'Calibration radionuclide neutron sources and conventional true values of associated quantities of interest.'
 readme = "README.md"
 requires-python = ">=3.7"
 license = "GPL-3.0-only"
@@ -27,3 +27,5 @@ dependencies = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/source"]
+
+# TODO: dependencies not from pip?
