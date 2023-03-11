@@ -56,8 +56,6 @@ print('-------------------------------------------------------------------------
 cf = Cf()
 # Print Cf radionuclide neutron source
 print(cf)
-# Print Cf radionuclide neutron source intrinsic characteristics
-print(cf.source_information())
 # Cf radionuclide neutron source characteristics on a specific date
 date = '2020/05/20'
 print(f'Date: {date}')
