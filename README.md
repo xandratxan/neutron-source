@@ -48,9 +48,9 @@ pip install .
 
 ## Usage examples
 
-### Defining a magnitude
+### How to define a calibration radionuclide neutron source
 
-### Conventional true value of radiological quantities
+### Conventional true value of associated quantities of interest
 
 ## Release History
 
