@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "neutron-source"
+description = 'Radionuclide neutron sources and the conventional true values of their radiologic quanties.'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "GPL-3.0-only"
+keywords = []
+dependencies = []
+version = "0.1.0"
+
+[project.urls]
+Documentation = "https://github.com/xandratxan/neutron-source#readme"
+Issues = "https://github.com/xandratxa/neutron-source/issues"
+Source = "https://github.com/xandratxan/neutron-source"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "sphinx",
+  "sphinx-rtd-theme",
+  "magnitudes"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/source"]
