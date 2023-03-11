@@ -5,13 +5,14 @@ import src.source.source as source
 
 
 # TODO: validate numbers
+
 @pytest.fixture
 def example_source():
     example = source.Cf()
     return example
 
 
-class TestSourceDefinition:  # TODO rename to TestSourceAttributesValue
+class TestSourceAttributesValue:
     def test_source_representation(self, example_source):
         expected = 'src.source.source.Cf()'
         actual = example_source.__repr__()

@@ -5,9 +5,9 @@ from magnitude import Magnitude
 
 import src.source.equations as eq
 
-u_t_days = 1  # TODO rename uncertainty_
-years_to_days = 365.242  # TODO rename conversion_
-psv_s_to_usv_h = Magnitude(value=0.0036, unit='uSv·s/pSv/h', uncertainty=0)  # TODO rename conversion_
+time_uncertainty_days = 1
+conversion_years_to_days = 365.242
+conversion_psv_s_to_usv_h = Magnitude(value=0.0036, unit='uSv·s/pSv/h', uncertainty=0)
 standard_units = {
     'calibration_strength': '1/s',
     'half_life': 'y',
@@ -44,10 +44,6 @@ class Source:
     total_air_scatter_component : Magnitude
         Total air scatter component of the source in 1/cm (value and absolute or relative uncertainty).
     """
-
-    # TODO: check docstrings
-    # TODO: Check units of source characteristics
-
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -89,17 +85,6 @@ class Source:
             elif magnitude.unit != standard_units[attr]:
                 raise ValueError(f'Source {attr} units must be standard.')
 
-        # for attr, magnitude in self.numeric_attributes():
-        #     if magnitude is not None:
-        #         if magnitude.value < 0:
-        #             raise ValueError(f'Source {attr} value must be positive.')
-        #         elif magnitude.uncertainty < 0:
-        #             raise ValueError(f'Source {attr} uncertainty must be positive.')
-        #         elif magnitude.relative_uncertainty < 0:
-        #             raise ValueError(f'Source {attr} relative uncertainty must be positive.')
-        #         elif magnitude.unit != standard_units[attr]:
-        #             raise ValueError(f'Source {attr} units must be standard.')
-
     def source_information(self):
         """Returns the source characteristics.
 
@@ -138,7 +123,7 @@ class Source:
             Source decay time from the source's calibration date (value, uncertainty, percentage uncertainty).
         """
         t = eq.elapsed_time(initial_date=self.calibration_date, final_date=date)
-        return Magnitude(value=t, unit='d', uncertainty=u_t_days)
+        return Magnitude(value=t, unit='d', uncertainty=time_uncertainty_days)
 
     def decay_factor(self, date):
         """Returns the source decay factor and its uncertainty.
@@ -157,7 +142,7 @@ class Source:
         """
         # TODO: compute decay factor value and uncertainty using Magnitudes
         t12 = copy(self.half_life)
-        t12.value = t12.value * years_to_days
+        t12.value = t12.value * conversion_years_to_days
         t = self.decay_time(date=date)
         f = eq.decay_factor_value(t=t.value, t12=t12.value)
         ur_f = eq.decay_factor_uncertainty(t=t.value, t12=t12.value,
@@ -200,7 +185,7 @@ class Source:
     def ambient_dose_equivalent_rate(self, date, distance):
         hf = self.fluence_to_dose_conversion_factor
         f = self.fluence_rate(date=date, distance=distance)
-        h = hf * f * psv_s_to_usv_h
+        h = hf * f * conversion_psv_s_to_usv_h
         h.unit = 'uSv/h'
         return h
 
@@ -248,6 +233,7 @@ class Cf(Source):
         self.total_air_scatter_component = Magnitude(value=0.00012, unit='1/cm', relative_uncertainty=0.15)
 
 # TODO: Script to automate tests expected values
+# TODO: check docstrings
 # TODO: Sphinx documentation
 # TODO: Update README
 # TODO: Emulate Ri pull request
