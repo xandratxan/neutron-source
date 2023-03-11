@@ -99,7 +99,7 @@ class TestSourceMethods:
 
     def test_source_information(self, example_source):
         expected = (
-            f'Name: 252-Cf radionuclide neutron source\n'
+            f'Name: 252-Cf\n'
             f'Calibration date: 2012/05/20\n'
             f'Magnitude: value ± uncertainty (percentage uncertainty)\n'
             f'Calibration strength: 547100000.0 ± {5.471E+08 * 1.3 / 100} 1/s (1.3%)\n'

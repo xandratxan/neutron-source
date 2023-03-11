@@ -195,7 +195,7 @@ class Cf(Source):
 
     def __init__(self):
         super().__init__()
-        self.name = '252-Cf radionuclide neutron source'
+        self.name = '252-Cf'
         self.calibration_date = '2012/05/20'
         self.calibration_strength = Magnitude(value=5.471E+08, unit='1/s', relative_uncertainty=0.013)
         self.half_life = Magnitude(value=2.6470, unit='y', uncertainty=0.0026)
