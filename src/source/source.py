@@ -5,9 +5,18 @@ from magnitude import Magnitude
 
 import src.source.equations as eq
 
-u_t_days = 1
-years_to_days = 365.242
-psv_s_to_usv_h = Magnitude(value=0.0036, unit='uSv·s/pSv/h', uncertainty=0)
+u_t_days = 1  # TODO rename uncertainty_
+years_to_days = 365.242  # TODO rename conversion_
+psv_s_to_usv_h = Magnitude(value=0.0036, unit='uSv·s/pSv/h', uncertainty=0)  # TODO rename conversion_
+standard_units = {
+    'calibration_strength': '1/s',
+    'half_life': 'y',
+    'anisotropy_factor': 'ND',
+    'linear_attenuation_coefficient': '1/cm',
+    'fluence_to_dose_conversion_factor': 'pSv·cm²',
+    'neutron_effectiveness': 'ND',
+    'total_air_scatter_component': '1/cm'
+}
 
 
 class Source:
@@ -36,11 +45,9 @@ class Source:
         Total air scatter component of the source in 1/cm (value and absolute or relative uncertainty).
     """
 
-    # TODO: Representation of non-dimensional magnitudes should be '10 ± 1 (10%)' instead of '10 ± 1 ND (10%)'
-    # TODO: Check units of source characteristics
-    # TODO: Magnitudes: add parenthesis to units when concatenating product and division.
-    #  Check all magnitudes (check print(h.unit) before unit conversion)
     # TODO: check docstrings
+    # TODO: Check units of source characteristics
+
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -57,6 +64,31 @@ class Source:
 
     def __str__(self):
         return f'{self.name} radionuclide neutron source'
+
+    def __setattr__(self, name, value):
+        if value is not None:
+            self.__dict__[name] = value
+            self.check_consistency()
+
+    def numeric_attributes(self):
+        for attr, magnitude in self.__dict__.items():
+            if attr != 'name' and attr != 'calibration_date':
+                yield attr, magnitude
+
+    def check_consistency(self):
+        # TODO: check only the attribute assigned in __setattr__.
+        # All numeric values and uncertainties must be positive
+        # All units must be standard
+        for attr, magnitude in self.numeric_attributes():
+            if magnitude is not None:
+                if magnitude.value < 0:
+                    raise ValueError(f'Source {attr} value must be positive.')
+                elif magnitude.uncertainty < 0:
+                    raise ValueError(f'Source {attr} uncertainty must be positive.')
+                elif magnitude.relative_uncertainty < 0:
+                    raise ValueError(f'Source {attr} relative uncertainty must be positive.')
+                elif magnitude.unit != standard_units[attr]:
+                    raise ValueError(f'Source {attr} units must be standard.')
 
     def source_information(self):
         """Returns the source characteristics.
@@ -204,3 +236,21 @@ class Cf(Source):
         self.fluence_to_dose_conversion_factor = Magnitude(value=385, unit='pSv·cm²', relative_uncertainty=0.01)
         self.neutron_effectiveness = Magnitude(value=0.5, unit='ND', uncertainty=0.1)
         self.total_air_scatter_component = Magnitude(value=0.00012, unit='1/cm', relative_uncertainty=0.15)
+
+# TODO: Script to automate tests expected values
+# TODO: Sphinx documentation
+# TODO: Update README
+# TODO: Emulate Ri pull request
+
+# TODO: BUG1 Magnitudes, representation, non-dimensional magnitudes, from '10 ± 1 ND (10%)' to '10 ± 1 (10%)'
+# TODO: Magnitudes: add parenthesis to units product and division.
+#  Check all magnitudes (check print(h.unit) before unit conversion)
+# TODO: Magnitudes, representation, show only significant numbers
+# TODO: Magnitudes, tests, script to automate tests expected values
+# TODO: BUG2 Magnitudes, negative values cant be defined since uncertainty calculation will derive negative uncertainty!
+#  Magnitude(value=-2.6470, unit='y', uncertainty=0.0026) This should be possible
+#  Magnitude(value=-2.6470, unit='y', uncertainty=-0.0026) This should not be possible
+# TODO: BUG3 Magnitudes, assign negative value to uncertainty attributes should not be possible
+#  m = Magnitude(value=10, unit='m', uncertainty=1)
+#  m.uncertainty = -1
+#  m.relative_uncertainty = -1
