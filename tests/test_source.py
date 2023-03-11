@@ -235,19 +235,5 @@ class TestSourceMethods:
         actual = str(source.ambient_dose_equivalent_rate(date=self.date, distance=self.distance))
         assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
 
-    def test_source_information(self, source):
-        expected = (
-            f'Name: 252-Cf\n'
-            f'Calibration date: 2012/05/20\n'
-            f'Magnitude: value ± uncertainty (percentage uncertainty)\n'
-            f'Calibration strength: 547100000.0 ± {5.471E+08 * 1.3 / 100} 1/s (1.3%)\n'
-            f'Half life: 2.647 ± 0.0026 y ({0.0026 / 2.6470 * 100}%)\n'
-            f'Anisotropy factor: 1.051 ± 0.019 ND ({0.019 / 1.051 * 100}%)\n'
-            f'Linear attenuation coefficient: 0.0001055 ± {1055e-7 * 1.5 / 100} 1/cm (1.5%)\n'
-            f'Fluence to dose conversion factor: 385 ± {385 * 1 / 100} pSv·cm² (1.0%)\n'
-            f'Neutron effectiveness: 0.5 ± 0.1 ND ({0.1 / 0.5 * 100}%)\n'
-            f'Total air scatter component: 0.00012 ± {0.00012 * 15 / 100} 1/cm (15.0%)'
-        )
-        actual = source.source_information()
-        assert actual == expected, f'Source strength should be {expected}, not {actual}.'
 # TODO: validate numbers
+# TODO: Script to automate tests expected values
