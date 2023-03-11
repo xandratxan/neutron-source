@@ -44,6 +44,7 @@ class Source:
     total_air_scatter_component : Magnitude
         Total air scatter component of the source in 1/cm (value and absolute or relative uncertainty).
     """
+
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -67,9 +68,11 @@ class Source:
             self.check_consistency(attr=name)
 
     def numeric_attributes(self):
+        attributes = {}
         for attr, magnitude in self.__dict__.items():
             if attr != 'name' and attr != 'calibration_date':
-                yield attr, magnitude
+                attributes[attr] = magnitude
+        return attributes
 
     def check_consistency(self, attr):
         # All numeric values and uncertainties must be positive
@@ -78,11 +81,11 @@ class Source:
         if magnitude is not None:
             if magnitude.value < 0:
                 raise ValueError(f'Source {attr} value must be positive.')
-            elif magnitude.uncertainty < 0:
+            if magnitude.uncertainty < 0:
                 raise ValueError(f'Source {attr} uncertainty must be positive.')
-            elif magnitude.relative_uncertainty < 0:
+            if magnitude.relative_uncertainty < 0:
                 raise ValueError(f'Source {attr} relative uncertainty must be positive.')
-            elif magnitude.unit != standard_units[attr]:
+            if magnitude.unit != standard_units[attr]:
                 raise ValueError(f'Source {attr} units must be standard.')
 
     def source_information(self):
