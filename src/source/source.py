@@ -1,6 +1,13 @@
+from copy import copy
+from math import pi
+
 from magnitude import Magnitude
 
 import src.source.equations as eq
+
+u_t_days = 1
+years_to_days = 365.242
+psv_s_to_usv_h = Magnitude(value=0.0036, unit='uSv·s/pSv/h', uncertainty=0)
 
 
 class Source:
@@ -31,6 +38,9 @@ class Source:
 
     # TODO: Representation of non-dimensional magnitudes should be '10 ± 1 (10%)' instead of '10 ± 1 ND (10%)'
     # TODO: Check units of source characteristics
+    # TODO: Magnitudes: add parenthesis to units when concatenating product and division.
+    #  Check all magnitudes (check print(h.unit) before unit conversion)
+    # TODO: check docstrings
     def __init__(self):
         self.name = self.__class__.__name__
         self.calibration_date = None
@@ -82,39 +92,35 @@ class Source:
 
         Returns
         -------
-        tuple
+        Magnitude
             Source decay time from the source's calibration date (value, uncertainty, percentage uncertainty).
         """
-        return eq.elapsed_time(initial_date=self.calibration_date, final_date=date)
+        t = eq.elapsed_time(initial_date=self.calibration_date, final_date=date)
+        return Magnitude(value=t, unit='d', uncertainty=u_t_days)
 
-    def decay_factor(self, final_date, initial_date=None):
+    def decay_factor(self, date):
         """Returns the source decay factor and its uncertainty.
 
         The decay factor is non-dimensional.
 
         Parameters
         ----------
-        initial_date : str
-            Initial date to compute the source decay factor.
-        final_date : str
+        date : str
             Final date to compute the source decay factor.
 
         Returns
         -------
-        tuple
-            Source decay factor between the initial and final dates (value, uncertainty, percentage uncertainty).
+        Magnitude
+            Source decay factor from the source's calibration date (value, uncertainty, percentage uncertainty).
         """
-        t12, u_t12, ur_t12 = self.half_life
-        t12 = t12 * eq.years_to_days
-        u_t12 = u_t12 * eq.years_to_days
-        if initial_date:
-            t, u_t, ur_t = eq.elapsed_time(initial_date=initial_date, final_date=final_date)
-        else:
-            t, u_t, ur_t = eq.elapsed_time(initial_date=self.calibration_date, final_date=final_date)
-        f = eq.decay_factor_value(t=t, t12=t12)
-        ur_f = eq.decay_factor_uncertainty(t=t, t12=t12, ur_t=ur_t, ur_t12=ur_t12)
-        u_f = eq.absolute_uncertainty(m=f, ur_m=ur_f)
-        return f, u_f, ur_f
+        # TODO: compute decay factor value and uncertainty using Magnitudes
+        t12 = copy(self.half_life)
+        t12.value = t12.value * years_to_days
+        t = self.decay_time(date=date)
+        f = eq.decay_factor_value(t=t.value, t12=t12.value)
+        ur_f = eq.decay_factor_uncertainty(t=t.value, t12=t12.value,
+                                           ur_t=t.relative_uncertainty, ur_t12=t12.relative_uncertainty)
+        return Magnitude(value=f, unit='ND', relative_uncertainty=ur_f)
 
     def strength(self, date):
         """Returns the source strength at the specified date and its uncertainty.
@@ -134,23 +140,27 @@ class Source:
         """
         if date == self.calibration_date:
             return self.calibration_strength
-        b0, u_b0, ur_b0 = self.calibration_strength
-        t12, u_t12, ur_t12 = self.half_life
-        t12 = t12 * eq.years_to_days
-        u_t12 = u_t12 * eq.years_to_days
-        t, u_t, ur_t = self.decay_time(date=date)
-        b = eq.strength_value(b0, t, t12)
-        ur_b = eq.strength_relative_uncertainty(t, t12, ur_b0, ur_t, ur_t12)
-        u_b = eq.absolute_uncertainty(m=b, ur_m=ur_b)
-        return b, u_b, ur_b
+        else:
+            b = self.calibration_strength * self.decay_factor(date=date)
+            b.unit = '1/s'
+            return b
 
     def fluence_rate(self, date, distance):
-        # TODO
-        pass
+        b = self.strength(date=date)
+        fi = self.anisotropy_factor
+        l = distance
+        _pi = Magnitude(value=pi, unit='ND', uncertainty=0)
+        _4 = Magnitude(value=4, unit='ND', uncertainty=0)
+        f = b * fi / _4 / _pi / l / l
+        f.unit = '1/cm²s'
+        return f
 
     def ambient_dose_equivalent_rate(self, date, distance):
-        # TODO
-        pass
+        hf = self.fluence_to_dose_conversion_factor
+        f = self.fluence_rate(date=date, distance=distance)
+        h = hf * f * psv_s_to_usv_h
+        h.unit = 'uSv/h'
+        return h
 
 
 class Cf(Source):

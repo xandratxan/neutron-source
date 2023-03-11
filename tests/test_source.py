@@ -1,8 +1,10 @@
 import pytest
+from magnitude import Magnitude
 
 import src.source.source as source
 
 
+# TODO: validate numbers
 @pytest.fixture
 def example_source():
     example = source.Cf()
@@ -62,40 +64,38 @@ class TestSourceDefinition:
 
 
 class TestSourceMethods:
+    date = '2020/05/20'
+    distance = Magnitude(value=100, unit='cm', uncertainty=1)
+
     def test_decay_time(self, example_source):
-        expected = (2922, 1, 0.034223134839151265)
-        actual = example_source.decay_time(date='2020/05/20')
+        expected = f'2922 ± 1 d ({1 / 2922 * 100}%)'
+        actual = str(example_source.decay_time(date=self.date))
         assert actual == expected, f'Source decay time should be {expected}, not {actual}.'
 
-    def test_decay_factor_one_date(self, example_source):
-        expected = (0.12307796649188105, 0.0002681946089174612, 0.21790627239129184)
-        actual = example_source.decay_factor(final_date='2020/05/20')
-        assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
-
-    def test_decay_factor_two_dates(self, example_source):
-        expected = (0.12307796649188105, 0.0002681946089174612, 0.21790627239129184)
-        actual = example_source.decay_factor(final_date='2020/05/20', initial_date='2012/05/20')
+    def test_decay_factor(self, example_source):
+        expected = f'0.12307796649188105 ± 0.0002681946089174612 ND (0.21790627239129182%)'
+        actual = str(example_source.decay_factor(date=self.date))
         assert actual == expected, f'Source decay factor should be {expected}, not {actual}.'
 
     def test_source_strength(self, example_source):
-        expected = (67335955.46770813, 887579.630636847, 1.3181362386140016)
-        actual = example_source.strength(date='2020/05/20')
+        expected = f'67335955.46770813 ± 887579.6306368469 1/s (1.3181362386140014%)'
+        actual = str(example_source.strength(date=self.date))
         assert actual == expected, f'Source strength should be {expected}, not {actual}.'
 
     def test_source_strength_at_calibration_date(self, example_source):
         expected = example_source.calibration_strength
-        actual = example_source.strength(date='2012/05/20')
+        actual = example_source.strength(date=example_source.calibration_date)
         assert actual == expected, f'Source strength should be {expected}, not {actual}.'
 
-    # def test_fluence_rate(self):
-    #     expected = None
-    #     actual = example_source.fluence_rate(date=None, distance=None)
-    #     assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
-    #
-    # def test_ambient_dose_equivalent_rate(self):
-    #     expected = None
-    #     actual = example_source.ambient_dose_equivalent_rate(date=None, distance=None)
-    #     assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+    def test_fluence_rate(self, example_source):
+        expected = f'563.170475934353 ± 14.906082662095244 1/cm²s (2.6468153603692817%)'
+        actual = str(example_source.fluence_rate(date=self.date, distance=self.distance))
+        assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+
+    def test_ambient_dose_equivalent_rate(self, example_source):
+        expected = f'780.5542796450133 ± 22.085178231439247 uSv/h (2.8294224767409286%)'
+        actual = str(example_source.ambient_dose_equivalent_rate(date=self.date, distance=self.distance))
+        assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
 
     def test_source_information(self, example_source):
         expected = (

@@ -1,3 +1,5 @@
+from magnitude import Magnitude
+
 from src.source.source import Source, Cf
 
 #  Contents:
@@ -57,35 +59,24 @@ print()
 print(cf.source_information())
 print()
 # Cf radionuclide neutron source characteristics on a specific date
+date = '2020/05/20'
+print(f'Date: {date}')
 # Compute source decay time on a date
-dt = cf.decay_time(date='2020/05/20')
+dt = cf.decay_time(date=date)
+print(dt)
 # Compute source decay time on a date
-df = cf.decay_factor(final_date='2020/05/20')
+df = cf.decay_factor(date=date)
+print(df)
 # Compute source strength on a date
-s = cf.strength(date='2020/05/20')
-print(
-    f'Initial date: 2012/05/20, final date 2020/05/20\n'
-    f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
-    f'Decay time (days): {dt[0]} \u00B1 {dt[1]} ({dt[2]})\n'
-    f'Decay factor (non-dimensional): {df[0]} \u00B1 {df[1]} ({df[2]})\n'
-    f'Strength (1/s): {s[0]} \u00B1 {s[1]} ({s[2]})'
-)
-print()
-# Compute source decay time between two dates
-df2 = cf.decay_factor(final_date='2020/05/20', initial_date='2016/05/20')
-print(
-    f'Initial date: 2012/05/20, final date 2016/05/20\n'
-    f'Decay factor (non-dimensional): {df2[0]} \u00B1 {df2[1]} ({df2[2]})'
-)
+s = cf.strength(date=date)
+print(s)
 print()
 # Cf radionuclide neutron source characteristics in terms of time and distance
-# TODO
+distance = Magnitude(value=100, unit='cm', uncertainty=1)
+print(f'Date: {date}, Distance: {distance}')
 # Compute source fluence rate at a distance on a date
-# fr = cf.fluence_rate(date='2020/05/20', distance=(100, 1, 1))
-# hr = cf.ambient_dose_equivalent_rate(date='2020/05/20', distance=(100, 1, 1))
-# print(
-#     f'Date 2020/05/20, distance 100 cm\n'
-#     f'Magnitude (unit): value \u00B1 uncertainty (percentage uncertainty)\n'
-#     f'Fluence rate (1/cm²s): {fr[0]} \u00B1 {fr[1]} ({fr[2]})\n'
-#     f'Ambient dose equivalent rate (\u03BCSv/h): {hr[0]} \u00B1 {hr[1]} ({hr[2]})\n'
-# )
+fr = cf.fluence_rate(date=date, distance=distance)
+print(fr)
+# Compute source ambient dose equivalent rate at a distance on a date
+hr = cf.ambient_dose_equivalent_rate(date=date, distance=distance)
+print(hr)
