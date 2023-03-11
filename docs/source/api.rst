@@ -3,10 +3,20 @@ API Reference
 
 This part of the documentation covers all the public interfaces of ``neutron-source``.
 
-.. automodule:: source
+.. autosummary::
+    source.source
+    source.source.Source
+    source.source.Cf
+    source.equations
 
-.. autoclass:: source.Source
+source.source
+-------------
 
-.. autoclass:: source.Cf
+.. automodule:: source.source
+   :members:
 
-.. automodule:: equations
+source.equations
+----------------
+
+.. automodule:: source.equations
+   :members:
