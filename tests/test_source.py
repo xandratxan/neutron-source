@@ -11,7 +11,7 @@ def example_source():
     return example
 
 
-class TestSourceDefinition:
+class TestSourceDefinition:  # TODO rename to TestSourceAttributesValue
     def test_source_representation(self, example_source):
         expected = 'src.source.source.Cf()'
         actual = example_source.__repr__()
@@ -61,6 +61,29 @@ class TestSourceDefinition:
         expected = f'0.00012 ± {0.00012 * 15 / 100} 1/cm (15.0%)'
         actual = str(example_source.total_air_scatter_component)
         assert actual == expected, f'Source total air scatter component should be {expected}, not {actual}.'
+
+
+class TestSourceAttributesConsistency:
+    def test_all_values_positive(self, example_source):
+        for attr, magnitude in example_source.numeric_attributes():
+            assert magnitude.value >= 0, f'Source {attr} value must be positive.'
+
+    def test_all_uncertainties_positive(self, example_source):
+        for attr, magnitude in example_source.numeric_attributes():
+            assert magnitude.uncertainty >= 0, f'Source {attr} value must be positive.'
+
+    def test_all_relative_uncertainties_positive(self, example_source):
+        for attr, magnitude in example_source.numeric_attributes():
+            assert magnitude.uncertainty >= 0, f'Source {attr} value must be positive.'
+
+    def test_all_units_standard(self, example_source):
+        assert example_source.calibration_strength.unit == '1/s'
+        assert example_source.half_life.unit == 'y'
+        assert example_source.anisotropy_factor.unit == 'ND'
+        assert example_source.linear_attenuation_coefficient.unit == '1/cm'
+        assert example_source.fluence_to_dose_conversion_factor.unit == 'pSv·cm²'
+        assert example_source.neutron_effectiveness.unit == 'ND'
+        assert example_source.total_air_scatter_component.unit == '1/cm'
 
 
 class TestSourceMethods:
