@@ -7,9 +7,8 @@ from src.source.source import Source, Cf
 #  2. Create your own source as a new class
 #  3. Using example source
 #  4. Consistency check
-
-#  1. Create your own source modifying generic source attributes
-# ----------------------------------------------------------------------------------------------------------------------
+print('1. Create your own source modifying generic source attributes')
+print('---------------------------------------------------------------------------------------------------------------')
 # Create a generic radionuclide neutron source
 neutron_source = Source()
 # Define neutron source intrinsic characteristics
@@ -24,10 +23,11 @@ neutron_source.neutron_effectiveness = Magnitude(value=0.5, unit='ND', uncertain
 neutron_source.total_air_scatter_component = Magnitude(value=0.00012, unit='1/cm', relative_uncertainty=0.15)
 # Print Cf radionuclide neutron source intrinsic characteristics
 print(neutron_source)
+print()
+print('2. Create your own source as a new class')
+print('---------------------------------------------------------------------------------------------------------------')
 
 
-#  2. Create your own source as a new class
-# ----------------------------------------------------------------------------------------------------------------------
 # Define a class which inherits from Source class.
 class MySource(Source):
     """252-Cf radionuclide neutron source from LPN."""
@@ -49,9 +49,9 @@ class MySource(Source):
 my_source = MySource()
 # Print 241-Am/Be radionuclide neutron source
 print(my_source)
-
-#  3. Using example source
-# ----------------------------------------------------------------------------------------------------------------------
+print()
+print('3. Using example source')
+print('---------------------------------------------------------------------------------------------------------------')
 # Create a Cf radionuclide neutron source
 cf = Cf()
 # Print Cf radionuclide neutron source
@@ -79,19 +79,15 @@ print(fr)
 # Compute source ambient dose equivalent rate at a distance on a date
 hr = cf.ambient_dose_equivalent_rate(date=date, distance=distance)
 print(hr)
-
-#  4. Consistency checks
-# ----------------------------------------------------------------------------------------------------------------------
+print()
+print('4. Consistency checks')
+print('---------------------------------------------------------------------------------------------------------------')
 # Access to numeric attributes
-for attr, magnitude in cf.numeric_attributes():
-    print(attr, magnitude)
-
+print(cf.numeric_attributes())
+print()
 # Check consistency: Different ways to define or assign a different value to an attribute:
-
-# 4.1. Defining a Class(Source):
-# ----------------------------------------------------------------------------------------------------------------------
-
-
+print('4.1. Defining a Class(Source):')
+print('---------------------------------------------------------------------------------------------------------------')
 # with attribute with negative value
 try:
     class MySource(Source):
@@ -116,8 +112,6 @@ except ValueError as exc:
 # raises ValueError: Uncertainties must be positive.
 # expected ValueError: Source calibration strength must be positive.
 # TODO FAIL
-
-
 # with attribute with non-standard units
 try:
     class MySource(Source):
@@ -140,8 +134,6 @@ try:
 except ValueError as exc:
     print(f'Raised ValueError: {exc}')
 # OK raises ValueError: Source calibration_strength units must be standard.
-
-
 # with negative uncertainty
 try:
     class MySource(Source):
@@ -164,12 +156,13 @@ try:
 except ValueError as exc:
     print(f'Raised ValueError: {exc}')
 # OK raise ValueError: Uncertainties must be positive.
-
-# 4.2. Assigning a Magnitude to attribute
-# ----------------------------------------------------------------------------------------------------------------------
+print()
+print('4.2. Assigning a Magnitude to attribute')
+print('---------------------------------------------------------------------------------------------------------------')
 try:
     cf = Cf()
     cf.calibration_strength = Magnitude(value=-5.471E+08, unit='1/s', relative_uncertainty=0.013)
+    print(f'FAIL: {cf.calibration_strength}')
 except ValueError as exc:
     print(f'Raised ValueError: {exc}')
 # raises ValueError: Uncertainties must be positive.
@@ -178,32 +171,30 @@ except ValueError as exc:
 try:
     cf = Cf()
     cf.calibration_strength = Magnitude(value=5.471E+08, unit='s', relative_uncertainty=0.013)
+    print(f'FAIL: {cf.calibration_strength}')
 except ValueError as exc:
     print(f'Raised ValueError: {exc}')
 # OK raises ValueError: Source calibration_strength units must be standard.
 try:
     cf = Cf()
     cf.calibration_strength = Magnitude(value=5.471E+08, unit='1/s', relative_uncertainty=-0.013)
+    print(f'FAIL: {cf.calibration_strength}')
 except ValueError as exc:
     print(f'Raised ValueError: {exc}')
 # OK raises ValueError: Uncertainties must be positive.
 cf = Cf()
 cf.calibration_strength = Magnitude(value=5.471E+07, unit='1/s', relative_uncertainty=0.013)
-print(cf.calibration_strength)
 print(f'54710000.0 ± {5.471E+07 * 0.013} 1/s (1.3%)')
-# OK
+print(cf.calibration_strength)
+# OK recalculate uncertainties
 cf = Cf()
 cf.calibration_strength = Magnitude(value=5.471E+08, unit='1/s', relative_uncertainty=0.02)
+print(f'547100000.0 ± {5.471E+08 * 0.02} 1/s (2.0%)')
 print(cf.calibration_strength)
-print(f'54710000.0 ± {5.471E+07 * 0.02} 1/s (2.0%)')
-
-# 4.3. Assigning a negative value to attribute.value
-# ----------------------------------------------------------------------------------------------------------------------
-try:
-    pass
-except ValueError as exc:
-    print(f'Raised ValueError: {exc}')
-
+print()
+# OK recalculate uncertainties
+print('4.3. Assigning a negative value to attribute.value')
+print('---------------------------------------------------------------------------------------------------------------')
 try:
     cf = Cf()
     cf.calibration_strength.value = -5.471E+08
