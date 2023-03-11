@@ -66,29 +66,39 @@ class Source:
         return f'{self.name} radionuclide neutron source'
 
     def __setattr__(self, name, value):
-        if value is not None:
-            self.__dict__[name] = value
-            self.check_consistency()
+        self.__dict__[name] = value
+        if name in self.numeric_attributes():
+            self.check_consistency(attr=name)
 
     def numeric_attributes(self):
         for attr, magnitude in self.__dict__.items():
             if attr != 'name' and attr != 'calibration_date':
                 yield attr, magnitude
 
-    def check_consistency(self):
-        # TODO: check only the attribute assigned in __setattr__.
+    def check_consistency(self, attr):
         # All numeric values and uncertainties must be positive
         # All units must be standard
-        for attr, magnitude in self.numeric_attributes():
-            if magnitude is not None:
-                if magnitude.value < 0:
-                    raise ValueError(f'Source {attr} value must be positive.')
-                elif magnitude.uncertainty < 0:
-                    raise ValueError(f'Source {attr} uncertainty must be positive.')
-                elif magnitude.relative_uncertainty < 0:
-                    raise ValueError(f'Source {attr} relative uncertainty must be positive.')
-                elif magnitude.unit != standard_units[attr]:
-                    raise ValueError(f'Source {attr} units must be standard.')
+        magnitude = self.__dict__[attr]
+        if magnitude is not None:
+            if magnitude.value < 0:
+                raise ValueError(f'Source {attr} value must be positive.')
+            elif magnitude.uncertainty < 0:
+                raise ValueError(f'Source {attr} uncertainty must be positive.')
+            elif magnitude.relative_uncertainty < 0:
+                raise ValueError(f'Source {attr} relative uncertainty must be positive.')
+            elif magnitude.unit != standard_units[attr]:
+                raise ValueError(f'Source {attr} units must be standard.')
+
+        # for attr, magnitude in self.numeric_attributes():
+        #     if magnitude is not None:
+        #         if magnitude.value < 0:
+        #             raise ValueError(f'Source {attr} value must be positive.')
+        #         elif magnitude.uncertainty < 0:
+        #             raise ValueError(f'Source {attr} uncertainty must be positive.')
+        #         elif magnitude.relative_uncertainty < 0:
+        #             raise ValueError(f'Source {attr} relative uncertainty must be positive.')
+        #         elif magnitude.unit != standard_units[attr]:
+        #             raise ValueError(f'Source {attr} units must be standard.')
 
     def source_information(self):
         """Returns the source characteristics.
