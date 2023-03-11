@@ -16,5 +16,9 @@ def test_decay_factor_value():
 
 def test_decay_factor_uncertainty():
     expected = 0.0021790627239129182
-    actual = eq.decay_factor_uncertainty(t=2922, t12=2.6470 * conversion_years_to_days, ur_t=1 / 2922, ur_t12=0.0026 / 2.6470)
+    actual = eq.decay_factor_uncertainty(t=2922, t12=2.6470 * conversion_years_to_days,
+                                         ur_t=1 / 2922, ur_t12=0.0026 / 2.6470)
     assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
+
+# TODO: validate numbers
+# TODO: Script to automate tests expected values
