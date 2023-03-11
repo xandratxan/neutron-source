@@ -2,8 +2,13 @@ from datetime import datetime
 from math import exp, log, sqrt
 
 
+# TODO: check docstrings
+
 def elapsed_time(initial_date, final_date):
-    """Compute the elapsed time between two dates in days.
+    """Returns the elapsed time between two dates and its uncertainty.
+
+    The unit of the elapsed time is day.
+    Standard uncertainty of the elapsed time is assumed to be 1 day.
 
     Parameters
     ----------
@@ -14,8 +19,8 @@ def elapsed_time(initial_date, final_date):
 
     Returns
     -------
-    float
-        Elapsed time between two dates in days.
+    int
+        Elapsed time between the initial and final dates.
     """
     initial_date = datetime.strptime(initial_date, '%Y/%m/%d')
     final_date = datetime.strptime(final_date, '%Y/%m/%d')
@@ -25,53 +30,46 @@ def elapsed_time(initial_date, final_date):
 
 
 def decay_factor_value(t, t12):
-    """Compute the value of the source's decay factor on a date from the calibration date.
+    """Returns the value of source decay factor.
 
-    Its value is computed as:
-
-    .. math::
-        f=e^{-\\frac{\\ln(2)t}{t_{12}}}
-
-    where :math:`t` the source's decay time from the source's calibration date and
-    :math:`t_{1/2}` if the source's half life.
+    The decay factor is non-dimensional.
+    The units of decay time and half life must be the same.
 
     Parameters
     ----------
     t : int or float
-        Value of source's decay time.
+        Value of source decay time.
     t12 : int or float
-        Value of source's half life.
+        Value of source half life.
 
     Returns
     -------
     float
-        Value of source's decay factor on a date from the calibration date.
+        Value of source decay factor.
     """
     return exp(-log(2) * t / t12)
 
 
 def decay_factor_uncertainty(t, t12, ur_t, ur_t12):
-    """Compute relative standard uncertainty of the source's decay factor on a date from the calibration date.
+    """Returns the relative uncertainty of source decay factor.
 
-    Its relative standard uncertainty is computed as:
-
-    .. math::
-        u_r(f)=\\sqrt{\\left(\\frac{\\ln(2)t}{t_{12}}\\right)^2\\left(u_r^2(t)+u_r^2(t_{1/2})\\right)}
+    The units of decay time and half life must be the same.
+    Standard uncertainty of the elapsed time is assumed to be 1 day.
 
     Parameters
     ----------
     t : int or float
-        Value of source's decay time.
+        Value of source decay time.
     t12 : int or float
-        Value of source's half life.
+        Value of source half life.
     ur_t : int or float
-        Relative uncertainty of source's decay time.
+        Relative uncertainty of source decay time.
     ur_t12 : int or float
-        Relative uncertainty of source's half life.
+        Relative uncertainty of source half life.
 
     Returns
     -------
     float
-        Relative standard uncertainty of source's decay factor on a date from the calibration date.
+        Relative uncertainty of source decay factor.
     """
     return sqrt((log(2) * t / t12) ** 2 * (ur_t ** 2 + ur_t12 ** 2))
