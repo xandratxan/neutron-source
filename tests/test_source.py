@@ -1,12 +1,12 @@
 import pytest
 from magnitude import Magnitude
 
-from src.source.source import Source, Cf
+import src.source.source as ns
 
 
 @pytest.fixture
 def source():
-    return Cf()
+    return ns.Cf()
 
 
 class TestSourceAttributesValue:
@@ -88,7 +88,7 @@ class TestSourceAttributesConsistency:
 
     def test_class_assignment_negative_value(self):
         with pytest.raises(ValueError) as exc:
-            class MySource(Source):
+            class MySource(ns.Source):
                 def __init__(self):
                     super().__init__()
                     self.name = '252-Cf'
@@ -108,7 +108,7 @@ class TestSourceAttributesConsistency:
 
     def test_class_assignment_negative_uncertainty(self):
         with pytest.raises(ValueError) as exc:
-            class MySource(Source):
+            class MySource(ns.Source):
                 def __init__(self):
                     super().__init__()
                     self.name = '252-Cf'
@@ -128,7 +128,7 @@ class TestSourceAttributesConsistency:
 
     def test_class_assignment_non_standard_unit(self):
         with pytest.raises(ValueError) as exc:
-            class MySource(Source):
+            class MySource(ns.Source):
                 def __init__(self):
                     super().__init__()
                     self.name = '252-Cf'
@@ -234,6 +234,24 @@ class TestSourceMethods:
         expected = f'780.5542796450133 ± 22.085178231439247 uSv/h (2.8294224767409286%)'
         actual = str(source.ambient_dose_equivalent_rate(date=self.date, distance=self.distance))
         assert actual == expected, f'Source fluence rate should be {expected}, not {actual}.'
+
+
+class TestSourceFunctions:
+    def test_elapsed_time(self):
+        expected = 2922
+        actual = ns._elapsed_time(initial_date='2012/05/20', final_date='2020/05/20')
+        assert actual == expected, f'Elapsed time should be {expected}, not {actual}.'
+
+    def test_decay_factor_value(self):
+        expected = 0.12307796649188105
+        actual = ns._decay_factor_value(t=2922, t12=2.6470 * ns.conversion_years_to_days)
+        assert actual == expected, f'Source decay factor value should be {expected}, not {actual}.'
+
+    def test_decay_factor_uncertainty(self):
+        expected = 0.0021790627239129182
+        actual = ns._decay_factor_uncertainty(t=2922, t12=2.6470 * ns.conversion_years_to_days, ur_t=1 / 2922,
+                                           ur_t12=0.0026 / 2.6470)
+        assert actual == expected, f'Source decay factor relative uncertainty should be {expected}, not {actual}.'
 
 # TODO: validate numbers
 # TODO: Script to automate tests expected values
