@@ -22,7 +22,7 @@ dependencies = [
   "pytest",
   "sphinx",
   "sphinx-rtd-theme",
-  "magnitudes"
+  "physical-magnitudes"
 ]
 
 [tool.hatch.build.targets.wheel]
